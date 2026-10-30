@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudSafe - Backup System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>CloudSafe</h1>
+            <p>Cloud-Based Disaster Recovery and Backup System</p>
+        </header>
+
+        <section class="upload-section">
+            <h2>Upload Your File</h2>
+            <p>Securely back up your important files to AWS S3.</p>
+
+            <form action="{{ url_for('upload_file') }}"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <input type="file" name="file" required>
+                <button type="submit">Upload & Backup</button>
+
+            </form>
+        </section>
+
+        <section class="message-section">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+        </section>
+
+        <section class="backup-section">
+            <h2>My Cloud Backups</h2>
+
+            {% if files %}
+                <table>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Size (KB)</th>
+                        <th>Action</th>
+                    </tr>
+
+                    {% for file in files %}
+                    <tr>
+                        <td>{{ file.name }}</td>
+                        <td>{{ file.size }}</td>
+                        <td>
+                            <a href="{{ url_for('restore_file', filename=file.name) }}">
+                                Restore
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            {% else %}
+                <p class="empty">No backups available yet.</p>
+            {% endif %}
+
+        </section>
+
+        <footer>
+            <p>CloudSafe | AWS S3 Cloud Storage</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
