@@ -4,78 +4,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CloudSafe - Backup System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>CloudSafe | Secure Login</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #101a35, #293d70, #6244a8);
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            width: 850px;
+            max-width: 100%;
+            min-height: 500px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,.3);
+        }
+
+        .left {
+            width: 50%;
+            background: linear-gradient(145deg, #263d75, #6244bd);
+            color: white;
+            padding: 55px 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .left h1 { font-size: 36px; margin-bottom: 18px; }
+        .left p { line-height: 1.7; color: #e0e6ff; }
+        .features { margin-top: 35px; line-height: 2.5; }
+
+        .right {
+            width: 50%;
+            padding: 55px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right h2 { color: #263d75; font-size: 28px; margin-bottom: 10px; }
+        .subtitle { color: #777; margin-bottom: 28px; }
+
+        label { display: block; margin: 16px 0 8px; color: #333; font-weight: bold; }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d4d8e2;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        input:focus { border-color: #6244bd; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 8px;
+            background: #6244bd;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover { background: #493295; }
+
+        .bottom { margin-top: 22px; text-align: center; color: #666; }
+        a { color: #6244bd; text-decoration: none; font-weight: bold; }
+
+        .message { padding: 10px; margin-bottom: 10px; border-radius: 6px; background: #ffe6e6; color: #a22; }
+        .success { background: #e4f8e9; color: #176b30; }
+
+        @media(max-width: 650px) {
+            .container { flex-direction: column; }
+            .left, .right { width: 100%; padding: 35px 25px; }
+            .left { min-height: 220px; }
+        }
+    </style>
 </head>
-
 <body>
+<div class="container">
 
-    <div class="container">
-
-        <header>
-            <h1>CloudSafe</h1>
-            <p>Cloud-Based Disaster Recovery and Backup System</p>
-        </header>
-
-        <section class="upload-section">
-            <h2>Upload Your File</h2>
-            <p>Securely back up your important files to AWS S3.</p>
-
-            <form action="{{ url_for('upload_file') }}"
-                  method="POST"
-                  enctype="multipart/form-data">
-
-                <input type="file" name="file" required>
-                <button type="submit">Upload & Backup</button>
-
-            </form>
-        </section>
-
-        <section class="message-section">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                    <div class="message {{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endwith %}
-        </section>
-
-        <section class="backup-section">
-            <h2>My Cloud Backups</h2>
-
-            {% if files %}
-                <table>
-                    <tr>
-                        <th>File Name</th>
-                        <th>Size (KB)</th>
-                        <th>Action</th>
-                    </tr>
-
-                    {% for file in files %}
-                    <tr>
-                        <td>{{ file.name }}</td>
-                        <td>{{ file.size }}</td>
-                        <td>
-                            <a href="{{ url_for('restore_file', filename=file.name) }}">
-                                Restore
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
-
-            {% else %}
-                <p class="empty">No backups available yet.</p>
-            {% endif %}
-
-        </section>
-
-        <footer>
-            <p>CloudSafe | AWS S3 Cloud Storage</p>
-        </footer>
-
+    <div class="left">
+        <h1>☁ CloudSafe</h1>
+        <p>Your trusted cloud backup and disaster recovery platform.</p>
+        <div class="features">
+            ✓ Secure cloud storage<br>
+            ✓ Easy file backup<br>
+            ✓ Quick file restoration<br>
+            ✓ Protected user accounts
+        </div>
     </div>
 
+    <div class="right">
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Login to access your secure storage.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login Securely</button>
+        </form>
+
+        <p class="bottom">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Create Account</a>
+        </p>
+    </div>
+
+</div>
 </body>
 </html>
